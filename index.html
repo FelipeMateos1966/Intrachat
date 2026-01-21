@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intrachat</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon.png">
+    <meta name="theme-color" content="#f57c00">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+            text-align: center;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            width: 300px;
+        }
+
+        img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+        }
+
+        h1 {
+            margin: 0 0 1rem;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #f57c00;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 24px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn:hover {
+            background-color: #e65100;
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #f57c00;
+            width: 20px;
+            height: 20px;
+            -webkit-animation: spin 1s linear infinite;
+            /* Safari */
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img src="icon.png" alt="Icono de Intrachat">
+        <h1>Intrachat</h1>
+        <p>Abriendo Intrachat...</p>
+        <div class="loader" id="loader"></div>
+        <a href="https://intrachat-7621540317.us-west1.run.app" class="btn" id="launchBtn">Abrir ahora</a>
+    </div>
+
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        // Automatic redirect logic
+        const targetUrl = "https://intrachat-7621540317.us-west1.run.app";
+        const launchBtn = document.getElementById('launchBtn');
+        const loader = document.getElementById('loader');
+        const p = document.querySelector('p');
+
+        // Check if we act as PWA (standalone) or just a web page
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+        if (isStandalone) {
+            p.innerText = "Abriendo Intrachat...";
+            loader.style.display = "block";
+            launchBtn.style.display = "none";
+
+            // Small delay to ensure UI renders before redirect
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 1000);
+        } else {
+            // Optional: Auto redirect even in browser? Maybe better to let user click to prevent loops if they navigate back.
+            // For now, let's auto-redirect after a short pause if it's not a PWA install check.
+            setTimeout(() => {
+                // window.location.href = targetUrl; 
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>
